@@ -1,11 +1,11 @@
-import Zones from "../../../models/Zone.Models.js"
-import {responseReturn,errorCaught} from "../../../helpers/response.helpers.js"
+import Zones from "../../models/Zone.Models.js"
+import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 const createZone = async(req,res)=>{
 try{
     const {name , city , code , notes,active} = req.body
-    if(!name || code) return responseReturn(res,false,400,"تأكد من أدخال جميع البيانات",null)
-    const ZoneValid = createZoneValidations(res,name,code)
+    if(!name || !code) return responseReturn(res,false,400,"تأكد من أدخال جميع البيانات",null)
+    const ZoneValid = await createZoneValidations(res,name,code)
     if(!ZoneValid) return;
     const Zone = await Zones.create({
         name:name,

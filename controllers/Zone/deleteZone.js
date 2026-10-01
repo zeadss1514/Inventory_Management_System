@@ -1,5 +1,5 @@
-import Zones from "../../../models/Zone.Models.js"
-import {responseReturn,errorCaught} from "../../../helpers/response.helpers.js"
+import Zones from "../../models/Zone.Models.js"
+import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 const deleteZone = async(req,res)=>{
     try{

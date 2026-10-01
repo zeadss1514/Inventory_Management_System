@@ -4,7 +4,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 
 export const getSite = async(req,res)=>{
-    const sites = await Sites.find()
+    const sites = await Sites.find().populate("zone")
     if(!sites || sites.length === 0){
             return responseReturn(res,false,400,"فشل في إيجاد الموقع ",null)
         }
@@ -14,7 +14,7 @@ export const getSite = async(req,res)=>{
 export const getOneSite = async(req,res)=>{
     const {siteID} = req.params
     if(!siteID)  return responseReturn(res,false,400,"برجاء إدخال ID صحيح لهذا الموقع",null)
-    const site = await Sites.findOne({_id:siteID}).populate("inSiteProducts.productId")
+    const site = await Sites.findOne({_id:siteID}).populate(["inSiteProducts.productId","zone"])
     if(!site) return responseReturn(res,false,400,"فشل في إيجاد الموقع ",null)
     return responseReturn(res,true,200,"تم إيجاد الموقع ",site)
 }

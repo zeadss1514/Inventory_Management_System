@@ -6,7 +6,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 const updateSite = async(req,res)=>{
     try{     
             const {name , zone , address , active} = req.body
-            const siteID = req.params.ID
+            const siteID = req.params.siteID
             const site = await Sites.findById(siteID)
             if(!site){
                     return responseReturn(res,false,400,`هذا الموقع غير موجود`,null)}

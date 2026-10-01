@@ -6,7 +6,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 const updateSite = async(req,res)=>{
     try{     
             const {name , zone , address , active} = req.body
-            const iventoryId = req.params.ID
+            const iventoryId = req.params.inventoryID
             const iventory = await inventories.findById(iventoryId)
             if(!iventory){
                     return responseReturn(res,false,400,`هذا المخزن غير موجود`,null)}
@@ -23,9 +23,10 @@ const updateSite = async(req,res)=>{
             if(address){iventory.address = address}
             if(active){iventory.active = active}
             await iventory.save()
-            return responseReturn(res,true,200,`تم تعديل المخزن بنجاح`,site)
+            return responseReturn(res,true,200,`تم تعديل المخزن بنجاح`,iventory)
     }
     catch(err){
+                    console.log(err)
                     return errorCaught(res,err)
 
     }

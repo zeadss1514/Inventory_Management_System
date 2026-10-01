@@ -13,6 +13,6 @@ router.get("/:inventoryID",getOneInventory)
 router.post("/",createInventory)
 // add inventory product make sure to add the admin restriction later 
 router.post("/:inventoryID",addInventoryProduct)
-router.put("/:id",updateInventory)
+router.put("/:inventoryID",updateInventory)
 
 export default router

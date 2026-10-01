@@ -3,7 +3,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 
 export const getAllInventories= async(req,res)=>{
-   const inventories = await Inventories.find()
+   const inventories = await Inventories.find().populate("zone")
     if(!inventories || inventories.length === 0){
             return responseReturn(res,false,400,"فشل في إيجاد المخزن ",null)
         }
@@ -13,7 +13,7 @@ export const getAllInventories= async(req,res)=>{
 export const getOneInventory = async(req,res)=>{
     const {inventoryID} = req.params
     if(!inventoryID)  return responseReturn(res,false,400,"برجاء إدخال ID صحيح لهذا المخزن",null)
-    const inventory = await Inventories.findOne({_id:inventoryID}).populate("inSiteProducts.productId")
+    const inventory = await Inventories.findOne({_id:inventoryID}).populate(["inSiteProducts.productId","zone"])
     if(!inventory) return responseReturn(res,false,400,"فشل في إيجاد المخزن ",null)
     return responseReturn(res,true,200,"تم إيجاد المخزن ",inventory)
 }

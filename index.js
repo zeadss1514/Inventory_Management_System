@@ -8,6 +8,7 @@ import inventoryRouter from "./routers/inventory.js"
 import purchasingRouter from "./routers/purchasing.router.js"
 import siteRouter from "./routers/site.router.js"
 import transactRouter from "./routers/transaction.js"
+import zoneRouter from "./routers/zone.js"
 // ====================== The End Of Import Section =============================
 const app = express()
 const Port = process.env.PORT
@@ -27,6 +28,9 @@ app.use("/inventory",inventoryRouter)
 app.use("/purchase",purchasingRouter)
 app.use("/site" , siteRouter)
 app.use("/transact" , transactRouter)
+app.use("/zone" , zoneRouter)
+
+
 
 
 // ======================== The End Of middlewares =============================
