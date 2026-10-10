@@ -6,7 +6,6 @@ const addPurchaseItem = async(req,res)=>{
     try{
     const invoiceId = req.params.invoiceId
     const {productId,CostPerOne,Quantity} = req.body
-    console.log(req.body)
     if(!productId || !CostPerOne || !Quantity) {return responseReturn(res,false,400,`برجاء إدخال جميع البيانات`,null)}
     const invoice = await Invoices.findOne({_id:invoiceId}).populate("purchasedTo")
     if(!invoice) {return responseReturn(res,false,400,`هذة الفاتورة غير موجودة`,null)}
@@ -17,7 +16,6 @@ const addPurchaseItem = async(req,res)=>{
     
     if(ProductEntry){return responseReturn(res,false,400,`هذا المنتج موجود بالفعل`,null)}
     const product = await Products.findById(productId)
-    console.log(invoice.purchasedTo)
     if(!product) {return responseReturn(res,false,400,`هذا المنتج غير موجود بالفعل`,null)}
     const SiteproductEntry = invoice.purchasedTo.inSiteProducts?.find(
         (p) => p.productId.toString() === productId.toString()

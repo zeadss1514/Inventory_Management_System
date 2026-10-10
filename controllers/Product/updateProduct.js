@@ -16,7 +16,6 @@ const UpdateProduct = async(req,res)=>{
         }
         if(active) Product.active = active
         if(description) Product.description = description
-        console.log(measurementUnit)
         if(measurementUnit) Product.measurementUnit = measurementUnit
         if(freezed) Product.freezed = freezed
         await Product.save()

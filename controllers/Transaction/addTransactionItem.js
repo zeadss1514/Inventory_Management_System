@@ -34,7 +34,6 @@ try{
     return responseReturn(res,true,201,`تم إضافةالمنتج بيان النقل`,null)
 }
 catch(err){
-        console.log(err)
 
        return errorCaught(res,err)
 }}

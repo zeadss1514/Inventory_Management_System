@@ -32,7 +32,6 @@ const activateUsage = async (req, res) => {
           
           // Get the model from the stored model name (no populate needed)
           const TargetModel = mongoose.model(usage.useageFromType)
-          console.log(TargetModel)
       const targetId = usage.useageFrom
       for (const item of usage.UsageItems) {
         const { ProductId, Quantity } = item
@@ -65,7 +64,6 @@ const activateUsage = async (req, res) => {
 
     return responseReturn(res, true, 201, `تم تفعيل الفاتورة`, activated)
   } catch (err) {
-    console.log(err.message)
     if (err instanceof HttpError) {
       return responseReturn(res, false, err.status, err.message, null)
     }

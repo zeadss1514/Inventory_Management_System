@@ -12,7 +12,6 @@ export const getZone = async(req,res)=>{
         return responseReturn(res,true,200,"تم إيجاد المنطقة ",zones)
     }
     catch(err){
-        console.log(err)
         return errorCaught(res,err)
     }
 }
@@ -26,7 +25,6 @@ export const getOneZone = async(req,res)=>{
     return responseReturn(res,true,200,"تم إيجاد المنطقة ",zone)
    }
     catch(err){
-        console.log(err)
         return errorCaught(res,err)
     }
 }

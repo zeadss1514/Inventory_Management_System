@@ -26,7 +26,6 @@ const updateSite = async(req,res)=>{
             return responseReturn(res,true,200,`تم تعديل المخزن بنجاح`,iventory)
     }
     catch(err){
-                    console.log(err)
                     return errorCaught(res,err)
 
     }

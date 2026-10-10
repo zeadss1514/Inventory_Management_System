@@ -28,7 +28,6 @@ const getSiteProduct = async(req,res)=>{
     if(!site){return responseReturn(res,false,400,"فشل في إيجاد المنتج ",null)}
     if(site.inSiteProducts.lenght === 0)
     {return responseReturn(res,false,400,"فشل في ايجاد المنتج ",null)}
-    console.log(site.inSiteProducts)
     return responseReturn(res,true,200,"تم إيجاد المنتج ",site.inSiteProducts)
 }
 const getInventoryProduct = async(req,res)=>{

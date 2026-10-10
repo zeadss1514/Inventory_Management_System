@@ -7,7 +7,6 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 const createUsageInvoice = async(req,res)=>{
     try{
         const {usedFromType , usedFromId} = req.body
-        console.log(req.body)
         let useageFrom = null;
         if(usedFromType === "Sites"){ useageFrom = await Sites.findById(usedFromId)}
         else if(usedFromType === "Inventories"){ useageFrom = await inventories.findById(usedFromId)};
