@@ -1,31 +1,90 @@
+import mongoose from "mongoose"
 import Invoices from "../../models/Purchasing.Models.js"
-import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
-// next feature make middleware for invoices
-const activateInvoice = async(req,res)=>{
-    const invoiceId = req.params.invoiceId
-    const invoice = await Invoices.findOne({_id:invoiceId}).populate("purchasedTo")
-    if(!invoice){return responseReturn(res,false,400,`هذة الفاتورة غير موجوده `,null)}
-    if(invoice.Activated){return responseReturn(res,false,400,`هذة الفاتورة مفعله بالفعل`,null)}
-    const targetSite = invoice.purchasedTo.constructor
-    const targetId  =   invoice.purchasedTo._id
-    if(invoice.Activated) {return responseReturn(res,false,400,`هذة الفاتورة مفعله بالفعل`,null)}
-    //if(invoice.user.toString() != req.auth.id.toString()){return responseReturn(res,false,400,`هذة الفاتورة لا تنتمي إلي هذا المستخدم`,null)}
-    if(invoice.InvoiceItems.length<1) return  responseReturn(res,false,400,`هذة الفاتورة لا يوجد بها منتجات `,null)
-    for (const item of invoice.InvoiceItems){
-        const {ProductId , Quantity} = item
-        const updateResult = await targetSite.updateOne(
+import { responseReturn, errorCaught } from "../../helpers/response.helpers.js"
+
+class HttpError extends Error {
+  constructor(status, message) {
+    super(message)
+    this.status = status
+  }
+}
+
+const activateInvoice = async (req, res) => {
+  const { invoiceId } = req.params
+
+  if (!mongoose.isValidObjectId(invoiceId)) {
+    return responseReturn(res, false, 400, `رقم الفاتورة غير صالح`, null)
+  }
+
+  const session = await mongoose.startSession()
+
+  try {
+    let activated
+
+    await session.withTransaction(async () => {
+      const invoice = await Invoices.findById(invoiceId).session(session)
+
+      if (!invoice) throw new HttpError(400, `هذة الفاتورة غير موجوده`)
+      if (invoice.Activated) throw new HttpError(400, `هذة الفاتورة مفعله بالفعل`)
+      if (!invoice.InvoiceItems || invoice.InvoiceItems.length < 1) {
+        throw new HttpError(400, `هذة الفاتورة لا يوجد بها منتجات`)
+      }
+
+      // Resolve the target model (works with both ref and refPath)
+      const pathOpts = Invoices.schema.path("purchasedTo").options
+      const modelName =
+        (pathOpts.refPath && invoice.get(pathOpts.refPath)) ||
+        (typeof pathOpts.ref === "string" ? pathOpts.ref : null)
+
+      if (!modelName) {
+        throw new HttpError(400, `لا يمكن تحديد مكان الفاتورة`)
+      }
+
+      const TargetModel = mongoose.model(modelName)
+      const targetId = invoice.purchasedTo
+
+      for (const item of invoice.InvoiceItems) {
+        const { ProductId, Quantity } = item
+
+        if (!Quantity || Quantity <= 0) {
+          throw new HttpError(400, `كمية غير صالحة`)
+        }
+
+        // Product already exists on the site: increase its stock
+        const result = await TargetModel.updateOne(
           { _id: targetId, "inSiteProducts.productId": ProductId },
-          { $inc: { "inSiteProducts.$.stock": Quantity } }
-            )
-      if (updateResult.matchedCount === 0)
-        await targetSite.updateOne(
+          { $inc: { "inSiteProducts.$.stock": Quantity } },
+          { session }
+        )
+
+        // Product not on the site yet: add it
+        if (result.matchedCount === 0) {
+          const pushResult = await TargetModel.updateOne(
             { _id: targetId },
-            { $push: { inSiteProducts: { ProductId, stock: Quantity } } }
-            )
+            { $push: { inSiteProducts: { productId: ProductId, stock: Quantity } } },
+            { session }
+          )
+
+          if (pushResult.matchedCount === 0) {
+            throw new HttpError(400, `الموقع غير موجود`)
+          }
+        }
+      }
+
+      invoice.Activated = true
+      await invoice.save({ session })
+      activated = invoice
+    })
+
+    return responseReturn(res, true, 201, `تم تفعيل الفاتورة`, activated)
+  } catch (err) {
+    if (err instanceof HttpError) {
+      return responseReturn(res, false, err.status, err.message, null)
     }
-  invoice.Activated = true;
-  await invoice.save();
-  return responseReturn(res,true,201,`تم تفعيل الفاتورة  `,invoice)
+    return errorCaught(res, err)
+  } finally {
+    session.endSession()
+  }
 }
 
 export default activateInvoice
