@@ -12,7 +12,7 @@ const addSiteProduct = async(req,res)=>{
     }
     const ProductEntry = site.inSiteProducts.find((item)=> item.productId.toString() === productId.toString())
     if(ProductEntry){
-        ProductEntry.stock += Quantity;
+        ProductEntry.stock += quantity;
         await site.save();
             responseReturn(res,true,200,"تم إضافة المنتج بنجاح",site)
     const logString = `تم زيادة المنتج ${product.name}إلي الموقع ${site.name} بمقدار ${quantity}${product.measurementUnit} ليصبح الإجمالي ${product.stock}${product.measurementUnit}`
@@ -23,7 +23,7 @@ const addSiteProduct = async(req,res)=>{
     if(!product)  return responseReturn(res,false,400,"هذا المنتج غير موجود برجاء التأكد من وجوده",null)
     site.inSiteProducts.push({
         productId:productId,
-        stock:Quantity,
+        stock:quantity,
         minStock:minStock,
         maxStock:maxStock,
         notes:notes,
