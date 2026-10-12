@@ -4,7 +4,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 import LogsModels from "../../models/Logs.Models.js"
 
 const addSiteProduct = async(req,res)=>{
-    const {productId,Quantity,minStock,maxStock,notes} = req.body
+    const {productId,quantity,minStock,maxStock,notes} = req.body
     const {siteID} = req.params
     const site = await Sites.findById(siteID)
     if(!site) {
