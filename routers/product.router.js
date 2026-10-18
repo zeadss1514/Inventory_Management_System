@@ -3,10 +3,12 @@ import express from "express"
 import createProduct from "../controllers/Product/createProduct.js"
 import {getProduct,getOneProduct,getSiteProduct,getInventoryProduct} from "../controllers/Product/getProduct.js"
 import UpdateProduct from "../controllers/Product/updateProduct.js" 
+import {admin,superAdmin} from "../middlewares/roleAuth.js"
+
 const router = express.Router()
 
 
-router.post("/",createProduct)
+router.post("/",admin,createProduct)
 router.get("/",getProduct)
 router.get("/site/:siteID",getSiteProduct)
 router.get("/inventory/:inventoryID",getInventoryProduct)

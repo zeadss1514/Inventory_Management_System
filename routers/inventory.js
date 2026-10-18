@@ -3,6 +3,7 @@ import createInventory from "../controllers/inventory/createInventory.js"
 import addInventoryProduct from "../controllers/inventory/addInventoryProduct.js"
 import updateInventory from "../controllers/inventory/updateInventory.js"
 import {getAllInventories,getOneInventory} from "../controllers/inventory/getinventory.js"
+import {admin,superAdmin} from "../middlewares/roleAuth.js"
 
 
 
@@ -10,7 +11,7 @@ const router = express.Router()
 
 router.get("/",getAllInventories)
 router.get("/:inventoryID",getOneInventory)
-router.post("/",createInventory)
+router.post("/",admin,createInventory)
 // add inventory product make sure to add the admin restriction later 
 router.post("/:inventoryID",addInventoryProduct)
 router.put("/:inventoryID",updateInventory)

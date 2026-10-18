@@ -3,6 +3,8 @@ import createPurchaseInvoice from "../controllers/purchasing/createPurchasing.js
 import addPurchaseItem from "../controllers/purchasing/addPurchaseItems.js"
 import activateInvoice from "../controllers/purchasing/activateInvoice.js"
 import {getInvoice,getOneInvoice} from "../controllers/purchasing/getinvoice.js"
+import {admin,superAdmin} from "../middlewares/roleAuth.js"
+
 const router = express.Router()
 
 router.post("/",createPurchaseInvoice)

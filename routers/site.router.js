@@ -4,10 +4,11 @@ import createSite from "../controllers/Site/createSite.js"
 //import updateSite from "../controllers/Site/updateSite.js"
 import addSiteProduct from "../controllers/Site/addSiteProduct.js"
 import updateSite from "../controllers/Site/updateSite.js"
+import {admin,superAdmin} from "../middlewares/roleAuth.js"
 
 const router = express.Router()
 
-router.post("/",createSite)
+router.post("/",admin,createSite)
 router.get("/",getSite)
 router.post("/:siteID",addSiteProduct)
 router.get("/:siteID",getOneSite)

@@ -27,7 +27,7 @@ const userSchema = mongoose.Schema({
         default:false,
     }
     ,
-    addInventory:{
+    Usage:{
         type:Boolean,
         required:true,
         default:false,

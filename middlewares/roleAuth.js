@@ -15,7 +15,5 @@ const roleAuth = (allowedRoles)=>{
 }}
 
 
-const admin = roleAuth(["admin","superAdmin"])
-const superAdmin = roleAuth(["superAdmin"])
-
-module.exports = {admin,superAdmin}
+export const admin = roleAuth(["admin","superAdmin"])
+export const superAdmin = roleAuth(["superAdmin"])
