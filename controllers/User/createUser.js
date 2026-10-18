@@ -49,7 +49,6 @@ const createUserCValidationCheck = async(req,res,email , phone , password , user
                 }
             return true;}
     catch(err){
-            console.log(err)
        return errorCaught(res,err)
     }
 }

@@ -28,5 +28,4 @@ export const authMiddleWare = async(req,res,next)=>{
         next()
     }
 catch(err){
-    console.log(err)
 return errorCaught(res,err)}}

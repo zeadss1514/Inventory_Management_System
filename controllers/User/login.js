@@ -4,7 +4,6 @@ import {genToken} from "../../helpers/jwt.helpers.js"
 
 export const LoginFunc = async(req,res)=>{
     const {userName,password} = req.body
-    console.log(req.body)
     if(!userName||!password) 
         return responseReturn(res,false,400,"برجاء إدخال جميع البيانات",null)
     const user = await User.findOne({userName})
