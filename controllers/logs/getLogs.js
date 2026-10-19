@@ -10,7 +10,6 @@ export const getAllLogs = async(req,res) =>{
     return responseReturn(res,true,200,"تم إيجاد اللوجز ",logs)
     }
     catch(err){
-        console.log(err)
         return errorCaught(res,err)
     }
 }

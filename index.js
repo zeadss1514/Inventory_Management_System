@@ -47,8 +47,5 @@ app.use("/user",user)
 
 
 // ======================== The End Of middlewares =============================
-app.listen(Port, ()=>{
-    console.log(`your application started and you can visit it throug https//localhost:${Port}`)
-})
-mongoose.connect(connection_string).then(()=>{console.log("Connected to mongodb sucessfully")})
-.catch((e)=>(console.log(e)))
+app.listen(Port, ()=>{})
+mongoose.connect(connection_string).then(()=>{})
