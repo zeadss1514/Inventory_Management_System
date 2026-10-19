@@ -8,12 +8,14 @@ const createPurchaseInvoice = async(req,res)=>{
     try{
         const {purchaseToType , purchaseToId} = req.body
         let purchaseTo = null;
+        const {id,Purchase} = req.auth
+        if(!id || !Purchase) return responseReturn(res,false,400,`لا يمكنك انشاء الفاتورة`,null)
         if(purchaseToType === "Sites"){ purchaseTo = await Sites.findById(purchaseToId)}
         else if(purchaseToType === "Inventories"){ purchaseTo = await inventories.findById(purchaseToId)};
         if(!purchaseTo || !purchaseTo.active) 
                 return responseReturn(res,false,400,`لا يمكن النقل او الشراء من هذة الوجهة`,null)
         const invoice = await Invoices.create({
-            //user:req.auth.id,
+            user:id,
             purchaseToType:purchaseToType,
             purchasedTo:purchaseToId,})
         if(!invoice) return responseReturn(res,false,400,`تعذر إنشاءالفاتورة`,null)

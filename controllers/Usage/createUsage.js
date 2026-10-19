@@ -7,13 +7,16 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 const createUsageInvoice = async(req,res)=>{
     try{
         const {usedFromType , usedFromId} = req.body
+        const {id,} = req.auth
+        const doUsage = req.auth.Usage
+        if(!id || !doUsage) return responseReturn(res,false,400,`لا يمكنك انشاء الأستهلاك`,null)
         let useageFrom = null;
         if(usedFromType === "Sites"){ useageFrom = await Sites.findById(usedFromId)}
         else if(usedFromType === "Inventories"){ useageFrom = await inventories.findById(usedFromId)};
         if(!useageFrom || !useageFrom.active) 
                 return responseReturn(res,false,400,`لا يمكن الأستهلاك من هذة الوجهة`,null)
         const usage = await Usage.create({
-            //user:req.auth.id,
+            user:id,
             useageFromType:usedFromType,
             useageFrom:usedFromId,})
         if(!usage) return responseReturn(res,false,400,`تعذر إنشاءالفاتورة`,null)

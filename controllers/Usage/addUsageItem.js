@@ -7,14 +7,15 @@ const addUsageItem = async(req,res)=>{
     try{
     const usageID = req.params.usageID
     const {productId,Quantity} = req.body
+    const {id,} = req.auth
+    const doUsage = req.auth.Usage
+    if(!id || !doUsage) return responseReturn(res,false,400,`لا يمكنك انشاء الأستهلاك`,null)
     if(!productId || !Quantity) {return responseReturn(res,false,400,`برجاء إدخال جميع البيانات`,null)}
     const usage = await Usage.findOne({_id:usageID}).populate("useageFrom")
     if(!usage) {return responseReturn(res,false,400,`هذة الفاتورة غير موجودة`,null)}
     if(usage.Activated) {return responseReturn(res,false,400,`هذة الفاتورة مفعله بالفعل`,null)}
-    //if(invoice.user.toString() != req.auth.id.toString()){return responseReturn(res,false,400,`هذة الفاتورة لا تنتمي إلي هذا المستخدم`,null)}
-    //if(!(req.auth.Purchase)) {return responseReturn(res,false,400,``,null)} 
+    if(usage.user.toString() != id.toString()){return responseReturn(res,false,400,`هذة الفاتورة لا تنتمي إلي هذا المستخدم`,null)}
     const ProductEntry = usage.UsageItems.find((item)=> item.ProductId.toString() === productId.toString())
-    
     if(ProductEntry){return responseReturn(res,false,400,`هذا المنتج موجود بالفعل`,null)}
     const product = await Products.findById(productId)
     if(!product) {return responseReturn(res,false,400,`هذا المنتج غير موجود بالفعل`,null)}

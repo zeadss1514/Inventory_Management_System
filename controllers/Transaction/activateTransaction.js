@@ -2,6 +2,8 @@ import Transactions from "../../models/Transactions.Models.js"
 import Products from "../../models/Products.Models.js"
 import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 import mongoose from "mongoose";
+import Logs from "../../models/Logs.Models.js"
+
 // Small helper so any validation failure inside the transaction aborts it.
 class TransactError extends Error {
   constructor(message, status = 400) {
@@ -12,12 +14,13 @@ class TransactError extends Error {
 
 const TransactionActivation = async (req, res) => {
   const session = await mongoose.startSession();
+  const logs = []
   try {
     const { transactID } = req.params;
-    //const userId = req.auth.userId;
 
-    // if (!req.auth.transact)
-    //   return responseReturn(res, false, 400, `هذا المستخدم لا يمكنه اجراء تنقلات`, null);
+    const {id,doTransactions} = req.auth
+
+    if(!id || !doTransactions) return responseReturn(res,false,400,`لا يمكنك انشاء التنقل`,null)
 
     let activated;
 
@@ -29,8 +32,8 @@ const TransactionActivation = async (req, res) => {
         .session(session);
 
       if (!transact) throw new TransactError(`بيان النقل غير موجود`);
-      //if (transact.user.toString() !== userId)
-        // throw new TransactError(`فشل في ايجاد الفاتورة`);
+    if(transact.user.toString() != id.toString())
+        throw new TransactError(`فشل في ايجاد الفاتورة`);
       if (transact.Activated) throw new TransactError(`الفاتورة مفعلة بالفعل`);
 
       const from = transact.TransactedFrom;
@@ -115,10 +118,31 @@ const TransactionActivation = async (req, res) => {
           if (pushed.matchedCount === 0)
             throw new TransactError(`مخزن الاستلام غير موجود`);
         }
+  logs.push({
+            typeOfInvoice:"TransactionsInvoices",
+            invoice:transactID,
+            IncomingStock: false,
+            ProductId:item.ProductId,
+            Quantity: item.Quantity,
+            PlaceType:transact.FromType,
+            Place:from,
+            user:id,
+        },
+        {
+            typeOfInvoice:"TransactionsInvoices",
+            invoice:transactID,
+            IncomingStock: true,
+            ProductId:item.ProductId,
+            Quantity: item.Quantity,
+            PlaceType:transact.ToType,
+            Place:to,
+            user:id,
+        })
       }
 
       transact.Activated = true;
       await transact.save({ session });
+      await Logs.insertMany(logs, { session })
       activated = transact;
     });
 

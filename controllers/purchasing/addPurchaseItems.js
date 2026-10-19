@@ -5,10 +5,13 @@ import Products from "../../models/Products.Models.js"
 const addPurchaseItem = async(req,res)=>{
     try{
     const invoiceId = req.params.invoiceId
+    const {id,Purchase} = req.auth
+    if(!id || !Purchase) return responseReturn(res,false,400,`لا يمكنك انشاء فاتورة الشراء`,null)
     const {productId,CostPerOne,Quantity} = req.body
     if(!productId || !CostPerOne || !Quantity) {return responseReturn(res,false,400,`برجاء إدخال جميع البيانات`,null)}
     const invoice = await Invoices.findOne({_id:invoiceId}).populate("purchasedTo")
     if(!invoice) {return responseReturn(res,false,400,`هذة الفاتورة غير موجودة`,null)}
+    if(!(String(invoice.user) === String(id))) return responseReturn(res,false,400,`لا يمكنك تعديل فاتورة الشراء`,null)
     if(invoice.Activated) {return responseReturn(res,false,400,`هذة الفاتورة مفعله بالفعل`,null)}
     //if(invoice.user.toString() != req.auth.id.toString()){return responseReturn(res,false,400,`هذة الفاتورة لا تنتمي إلي هذا المستخدم`,null)}
     //if(!(req.auth.Purchase)) {return responseReturn(res,false,400,``,null)} 

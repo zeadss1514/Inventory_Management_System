@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import Logs from "../../models/Logs.Models.js"
 import Invoices from "../../models/Purchasing.Models.js"
 import { responseReturn, errorCaught } from "../../helpers/response.helpers.js"
 
@@ -10,6 +11,9 @@ class HttpError extends Error {
 }
 
 const activateInvoice = async (req, res) => {
+
+  const {id,Purchase} = req.auth
+  if(!id || !Purchase) return responseReturn(res,false,400,`لا يمكنك تعديل فاتورة الشراء`,null)
   const { invoiceId } = req.params
 
   if (!mongoose.isValidObjectId(invoiceId)) {
@@ -17,6 +21,7 @@ const activateInvoice = async (req, res) => {
   }
 
   const session = await mongoose.startSession()
+  const logs = []
 
   try {
     let activated
@@ -25,6 +30,7 @@ const activateInvoice = async (req, res) => {
       const invoice = await Invoices.findById(invoiceId).session(session)
 
       if (!invoice) throw new HttpError(400, `هذة الفاتورة غير موجوده`)
+      if(!(String(invoice.user) === String(id)))throw new HttpError(400, `هذة الفاتورة لا يمكنك التعديل عليها`)
       if (invoice.Activated) throw new HttpError(400, `هذة الفاتورة مفعله بالفعل`)
       if (!invoice.InvoiceItems || invoice.InvoiceItems.length < 1) {
         throw new HttpError(400, `هذة الفاتورة لا يوجد بها منتجات`)
@@ -69,10 +75,21 @@ const activateInvoice = async (req, res) => {
             throw new HttpError(400, `الموقع غير موجود`)
           }
         }
+  logs.push({
+            typeOfInvoice:"Invoices",
+            invoice:invoiceId,
+            IncomingStock: true,
+            ProductId:ProductId,
+            Quantity: Quantity,
+            PlaceType:invoice.purchaseToType,
+            Place:targetId,
+            user:id,
+        },)
       }
 
       invoice.Activated = true
       await invoice.save({ session })
+      await Logs.insertMany(logs, { session })
       activated = invoice
     })
 

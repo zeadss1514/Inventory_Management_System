@@ -11,8 +11,9 @@ const TransactionsInvoiceSchena = mongoose.Schema({
         require: true
         },
     user:{
-        type: mongoose.Schema.Types.ObjectId,ref:"User"
-        , require:true,
+        type: mongoose.Schema.Types.ObjectId,ref:"User",
+        default: "6ad4bab122355ba500c316eb",
+        require:true,
     },
     ToType:{type:String,
         enum:["Sites","Inventories"],

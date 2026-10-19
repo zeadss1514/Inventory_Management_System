@@ -1,6 +1,7 @@
 import Usage from "../../models/Usage.Models.js"
 import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 import mongoose from "mongoose"
+import Logs from "../../models/Logs.Models.js"
 
 class HttpError extends Error {
   constructor(status, message) {
@@ -11,11 +12,13 @@ class HttpError extends Error {
 
 const activateUsage = async (req, res) => {
   const { usageID } = req.params
-  
+  const {id} = req.auth
+  const doUsage = req.auth.Usage
+  if(!id || !doUsage) return responseReturn(res,false,400,`لا يمكنك انشاء الأستهلاك`,null)
   if (!mongoose.isValidObjectId(usageID)) {
     return responseReturn(res, false, 400, `رقم الفاتورة غير صالح`, null)
   }
-  
+  const logs = []
   const session = await mongoose.startSession()
   
   try {
@@ -25,6 +28,7 @@ const activateUsage = async (req, res) => {
       const usage = await Usage.findById(usageID).session(session)
       
       if (!usage) throw new HttpError(400, `هذة الفاتورة غير موجوده`)
+        if(String(usage.user) != String(id)) throw new HttpError(400, `هذة الفاتورة لا يمكنك التعديل عليها`)
         if (usage.Activated) throw new HttpError(400, `هذة الفاتورة مفعله بالفعل`)
           if (!usage.UsageItems || usage.UsageItems.length < 1) {
             throw new HttpError(400, `هذة الفاتورة لا يوجد بها منتجات`)
@@ -55,10 +59,22 @@ const activateUsage = async (req, res) => {
         if (result.matchedCount === 0) {
           throw new HttpError(400, `المخزون غير كافي للمنتج ${ProductId}`)
         }
+  logs.push({
+            typeOfInvoice:"Usage",
+            invoice:usageID,
+            IncomingStock: false,
+            ProductId:ProductId,
+            Quantity: Quantity,
+            PlaceType:usage.useageFromType,
+            Place:targetId,
+            user:id,
+        },)
+
       }
 
       usage.Activated = true
       await usage.save({ session })
+      await Logs.insertMany(logs, { session })
       activated = usage
     })
 

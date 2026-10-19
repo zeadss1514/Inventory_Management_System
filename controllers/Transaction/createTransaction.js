@@ -5,6 +5,8 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 const createTransactions = async(req,res)=>{
     const {ToType,FromType,TransactedToId,TransactedFromId} = req.body
+    const {id,doTransactions} = req.auth
+    if(!id || !doTransactions) return responseReturn(res,false,400,`لا يمكنك انشاء التنقل`,null)
     let transactedFrom = null, transactedto = null;
     if(FromType === "Sites"){ transactedFrom = await Sites.findById(TransactedFromId)}
     else if(FromType === "Inventories"){ transactedFrom = await inventories.findById(TransactedFromId)};
@@ -15,7 +17,7 @@ const createTransactions = async(req,res)=>{
     if(!transactedto || !transactedto.active) 
             return responseReturn(res,false,400,`لا يمكن النقل او الشراء إلى هذة الوجهة`,null)
     const transactionInvoice = await Transactions.create({
-        //user:req.auth.id,
+        user:id,
         ToType:ToType,
         FromType:FromType,
         TransactedTo:transactedto,

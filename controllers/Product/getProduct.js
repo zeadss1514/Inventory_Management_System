@@ -2,24 +2,43 @@ import Products from "../../models/Products.Models.js"
 import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 import Sites from "../../models/Sites.Models.js"
 import Inventories from "../../models/Inventories.Models.js"
-
+import mongoose from "mongoose"
 const getProduct = async (req,res) => {
     const products = await Products.find()
     if(!products || products.length === 0){
             return responseReturn(res,false,400,"فشل في إيجاد المنتج ",null)
         }
         return responseReturn(res,true,200,"تم إيجاد المنتج ",products)
-
 }
-
-
 const getOneProduct = async (req,res) => {
     const {ProductID} = req.params
+    const productId = new mongoose.Types.ObjectId(ProductID)
     const product = await Products.findById(ProductID)
     if(!product){
             return responseReturn(res,false,400,"فشل في إيجاد المنتج ",null)
         }
-    return responseReturn(res,true,200,"تم إيجاد المنتج ",product)
+    const pipeline = [
+        { $match: { "inSiteProducts.productId": productId } },
+        {
+            $project: {
+                name: 1,
+                inSiteProducts: {
+                    $filter: {
+                        input: "$inSiteProducts",
+                        as: "item",
+                        cond: { $eq: ["$$item.productId", productId] }
+                    }
+                }
+            }
+        }
+    ]
+
+    const [sites, inventories] = await Promise.all([
+        Sites.aggregate(pipeline),
+        Inventories.aggregate(pipeline)
+    ])
+
+    return responseReturn(res,true,200,"تم إيجاد المنتج ",{"product":product,"sites":sites,"inventories":inventories})
 }
 
 const getSiteProduct = async(req,res)=>{

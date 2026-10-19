@@ -3,7 +3,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 
 export const getUsage = async(req,res)=>{
-    const usage = await Usage.find().populate("useageFrom").populate("useageFrom")
+    const usage = await Usage.find({Activated:true}).populate("useageFrom").populate(["useageFrom","user"])
     // if(!usage || usage.length === 0){
     //         return responseReturn(res,false,400,"فشل في إيجاد الفاتورة ",null)
     //     }
@@ -14,7 +14,7 @@ export const getUsage = async(req,res)=>{
 
 export const getOneUsage = async(req,res) =>{
     const {usageID} = req.params
-    const usage = await Usage.findOne({_id:usageID}).populate("useageFrom")
+    const usage = await Usage.findOne({_id:usageID}).populate(["useageFrom","user"])
     if(!usage){
             return responseReturn(res,false,400,"فشل في إيجاد الفاتورة ",null)
         }

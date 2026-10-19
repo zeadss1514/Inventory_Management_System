@@ -3,7 +3,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 
 export const getInvoice = async(req,res)=>{
-    const invoices = await Invoices.find().populate("purchasedTo")
+    const invoices = await Invoices.find({Activated:true}).populate(["purchasedTo","user"])
     if(!invoices || Invoices.length === 0){
             return responseReturn(res,false,400,"فشل في إيجاد الفاتورة ",null)
         }
@@ -14,7 +14,7 @@ export const getInvoice = async(req,res)=>{
 
 export const getOneInvoice = async(req,res) =>{
     const {invoiceId} = req.params
-    const invoice = await Invoices.findById(invoiceId)
+    const invoice = await Invoices.findOne({_id:invoiceId}).populate(["purchasedTo","user"])
     if(!invoice){
             return responseReturn(res,false,400,"فشل في إيجاد المنتج ",null)
         }

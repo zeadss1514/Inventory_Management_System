@@ -9,10 +9,11 @@ const UsageInvoiceSchena = mongoose.Schema({
         default: Date.now(),
         require: true
         },
-    // user:{
-    //     type: mongoose.Schema.Types.ObjectId,ref:"User"
-    //     , require:true,
-    // },
+    user:{
+        type: mongoose.Schema.Types.ObjectId,ref:"User",
+        default: "6ad4bab122355ba500c316eb",
+        require:true,
+    },
     useageFromType:{type:String,
         enum:["Sites","Inventories"],
         require:true,},

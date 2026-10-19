@@ -11,6 +11,7 @@ import transactRouter from "./routers/transaction.js"
 import zoneRouter from "./routers/zone.js"
 import usageRouter from "./routers/usage.js"
 import user from "./routers/user.js"
+import logs from "./routers/logs.js"
 import homePage from "./controllers/homePage.controller.js"
 import {authMiddleWare} from "./middlewares/checkAuthorization.js"
 // ====================== The End Of Import Section =============================
@@ -37,6 +38,7 @@ app.use("/site" , siteRouter)
 app.use("/transact" , transactRouter)
 app.use("/zone" , zoneRouter)
 app.use("/usage" , usageRouter)
+app.use("/logs" , logs)
 app.use("/user",user)
 
 
