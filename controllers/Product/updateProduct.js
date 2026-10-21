@@ -12,7 +12,8 @@ const UpdateProduct = async(req,res)=>{
             const nameValid = await Products.findOne({name:name})
             if(nameValid){
                return responseReturn(res,false,400,"هذا الأسم مستخدم من قبل برجاء استخدام اسم مختلف",null)
-            }          
+            }
+            Product.name = name       
         }
         if(active) Product.active = active
         if(description) Product.description = description
