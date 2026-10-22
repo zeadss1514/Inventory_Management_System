@@ -6,6 +6,7 @@ import LogsModels from "../../models/Logs.Models.js"
 const addSiteProduct = async(req,res)=>{
     const {productId,quantity,minStock,maxStock,notes} = req.body
     const {siteID} = req.params
+    const id = req.auth.id
     const site = await Sites.findById(siteID)
     if(!site) {
         return responseReturn(res,false,400,"هذا الموقع غير موجود برجاء التأكد من وجوده",null)
@@ -30,8 +31,15 @@ const addSiteProduct = async(req,res)=>{
     })
     await site.save()
     responseReturn(res,true,200,"تم إضافة المنتج بنجاح",site)
-    const logString = `تم إضافة المنتج ${product.name}إلي الموقع ${site.name} بمقدار ${quantity}${product.measurementUnit}`
-    LogsModels.create({logSting:logString})
+    await log.create({
+            typeOfInvoice:"adding",
+            IncomingStock: true,
+            ProductId:productId,
+            Quantity: quantity,
+            PlaceType:"Sites",
+            Place:siteID,
+            user:id,
+    })
     return;
 
 }

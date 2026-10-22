@@ -3,8 +3,8 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 
 const createProduct = async(req,res)=>{
 try{
-    const {active , name , code , description,measurementUnit} = req.body
-    if(!name || !code) return responseReturn(res,false,400,"تأكد من أدخال جميع البيانات",null)
+    const {active , name , code , description,measurementUnit,type} = req.body
+    if(!name || !code, !type) return responseReturn(res,false,400,"تأكد من أدخال جميع البيانات",null)
     const productValid = await createProductValidations(res,name,code)
     if(!productValid) return;
     const Product = await Products.create({
@@ -12,7 +12,8 @@ try{
         code:code,
         description:description,
         measurementUnit:measurementUnit,
-        active:active
+        active:active,
+        type:type
     })
     if(!Product) return responseReturn(res,false,400,"فشل في انشاء منتج جديد",null)
     return responseReturn(res,true,201,`تم انشاء المنتج ${Product.name}بنجاح`,Product)}

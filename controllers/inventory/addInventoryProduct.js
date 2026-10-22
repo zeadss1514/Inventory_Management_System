@@ -6,6 +6,7 @@ import LogsModels from "../../models/Logs.Models.js"
 const addInventoryProduct = async(req,res)=>{
     const {productId,quantity,minStock,maxStock,notes} = req.body
     const {inventoryID} = req.params
+    const id = req.auth.id
     const inventory = await inventories.findById(inventoryID)
     if(!inventory) {
         return responseReturn(res,false,400,"هذا المخزن غير موجود برجاء التأكد من وجوده",null)
@@ -30,8 +31,15 @@ const addInventoryProduct = async(req,res)=>{
     })
     await inventory.save()
     responseReturn(res,true,200,"تم إضافة المنتج بنجاح",inventory)
-    const logString = `تم إضافة المنتج ${product.name}إلي المخزن ${inventory.name} بمقدار ${quantity}${product.measurementUnit}`
-    LogsModels.create({logSting:logString})
+    await log.create({
+            typeOfInvoice:"adding",
+            IncomingStock: true,
+            ProductId:productId,
+            Quantity: quantity,
+            PlaceType:"Inventories",
+            Place:inventoryID,
+            user:id,
+    })
     return;
 }
 

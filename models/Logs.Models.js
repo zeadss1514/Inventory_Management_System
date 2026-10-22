@@ -23,7 +23,7 @@ const Logs = mongoose.Schema({
     Quantity:{type:mongoose.Schema.Types.Double},
     typeOfInvoice:{
         type:String,
-        enum:["Usage","Invoices","TransactionsInvoices"]},
+        enum:["Usage","Invoices","TransactionsInvoices","adding"]},
     invoice:{type: mongoose.Schema.Types.ObjectId,refPath:"typeOfInvoice",},
     IncomingStock:{type:Boolean,default:false}
 
