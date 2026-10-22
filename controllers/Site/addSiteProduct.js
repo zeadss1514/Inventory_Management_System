@@ -16,8 +16,15 @@ const addSiteProduct = async(req,res)=>{
         ProductEntry.stock += quantity;
         await site.save();
             responseReturn(res,true,200,"تم إضافة المنتج بنجاح",site)
-    const logString = `تم زيادة المنتج ${product.name}إلي الموقع ${site.name} بمقدار ${quantity}${product.measurementUnit} ليصبح الإجمالي ${product.stock}${product.measurementUnit}`
-    LogsModels.create({logSting:logString})
+    await LogsModels.create({
+            typeOfInvoice:"adding",
+            IncomingStock: true,
+            ProductId:productId,
+            Quantity: quantity,
+            PlaceType:"Sites",
+            Place:siteID,
+            user:id,
+    })
     return;
     }
     const product = await Products.findById(productId)
@@ -31,7 +38,7 @@ const addSiteProduct = async(req,res)=>{
     })
     await site.save()
     responseReturn(res,true,200,"تم إضافة المنتج بنجاح",site)
-    await log.create({
+    await LogsModels.create({
             typeOfInvoice:"adding",
             IncomingStock: true,
             ProductId:productId,
