@@ -24,6 +24,12 @@ const productsSchema = mongoose.Schema({
     },
     description:{
         type:String,
+    },
+    type:{
+        type:String,
+        enum:["tools","product"],
+        default:"product",
+        require:true
     }
 })
 

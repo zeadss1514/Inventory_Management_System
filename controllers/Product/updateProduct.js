@@ -4,7 +4,7 @@ import {responseReturn,errorCaught} from "../../helpers/response.helpers.js"
 const UpdateProduct = async(req,res)=>{
     try{
         const ProductId = req.params.ProductID
-        const {active,name, description,measurementUnit,freezed} = req.body
+        const {active,name, description,measurementUnit,freezed,type} = req.body
         const Product = await Products.findById(ProductId)
         if(!Product)   return responseReturn(res,false,400,"لم يتم ايجاد المنتج",null)
 
@@ -19,6 +19,7 @@ const UpdateProduct = async(req,res)=>{
         if(description) Product.description = description
         if(measurementUnit) Product.measurementUnit = measurementUnit
         if(freezed) Product.freezed = freezed
+        if(type) Product.type = type
         await Product.save()
     return responseReturn(res,true,200,`تم تعديل المنتج ${Product.name}بنجاح`,Product)}
        
