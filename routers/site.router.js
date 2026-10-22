@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.post("/",admin,createSite)
 router.get("/",getSite)
-router.post("/:siteID",addSiteProduct)
+router.post("/:siteID",admin,addSiteProduct)
 router.get("/:siteID",getOneSite)
 router.put("/:siteID",updateSite)
 
