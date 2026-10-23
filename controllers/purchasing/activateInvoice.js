@@ -69,7 +69,7 @@ const activateInvoice = async (req, res) => {
         if (result.matchedCount === 0) {
           const pushResult = await TargetModel.updateOne(
             { _id: targetId },
-            { $push: { inSiteProducts: { productId: ProductId, stock: Quantity } } },
+            { $push: { inSiteProducts: { productId: ProductId, stock: Quantity ,TotalQuantity:Quantity } } },
             { session }
           )
 

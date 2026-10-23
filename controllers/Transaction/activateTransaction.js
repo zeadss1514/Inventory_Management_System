@@ -114,6 +114,7 @@ const TransactionActivation = async (req, res) => {
                 inSiteProducts: {
                   productId: item.ProductId, // note: same key used everywhere
                   stock: item.Quantity,
+                  TotalQuantity:item.Quantity
                 },
               },
             },

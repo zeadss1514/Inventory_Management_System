@@ -14,6 +14,7 @@ const addSiteProduct = async(req,res)=>{
     const ProductEntry = site.inSiteProducts.find((item)=> item.productId.toString() === productId.toString())
     if(ProductEntry){
         ProductEntry.stock += quantity;
+        ProductEntry.TotalQuantity += quantity;
         await site.save();
             responseReturn(res,true,200,"تم إضافة المنتج بنجاح",site)
     await LogsModels.create({
