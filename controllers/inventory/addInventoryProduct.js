@@ -34,6 +34,7 @@ const addInventoryProduct = async(req,res)=>{
         stock:quantity,
         minStock:minStock,
         maxStock:maxStock,
+        TotalQuantity:quantity,
         notes:notes,
     })
     await inventory.save()

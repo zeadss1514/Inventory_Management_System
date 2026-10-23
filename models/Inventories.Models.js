@@ -6,7 +6,8 @@ const inSiteProducts = mongoose.Schema({
     minStock:{type:Number,default:0},
     maxStock:{type:Number,default:0},
     notes:{type:String,default:"none"},
-    lastPurchasedPrice:{type:mongoose.Schema.Types.Double,default:0.00}
+    TotalUsage:{type:mongoose.Schema.Types.Double,require:true},
+    TotalQuantity:{type:mongoose.Schema.Types.Double,require:true},
 })
 
 const InventoriesSchema = mongoose.Schema(

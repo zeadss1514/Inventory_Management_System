@@ -59,7 +59,9 @@ const activateInvoice = async (req, res) => {
         // Product already exists on the site: increase its stock
         const result = await TargetModel.updateOne(
           { _id: targetId, "inSiteProducts.productId": ProductId },
-          { $inc: { "inSiteProducts.$.stock": Quantity } },
+          { $inc: { "inSiteProducts.$.stock": Quantity ,
+            "inSiteProducts.$.TotalQuantity": Quantity 
+          } },
           { session }
         )
 

@@ -87,7 +87,9 @@ const TransactionActivation = async (req, res) => {
               },
             },
           },
-          { $inc: { "inSiteProducts.$.stock": -item.Quantity } },
+          { $inc: { "inSiteProducts.$.stock": -item.Quantity,
+            "inSiteProducts.$.TotalQuantity": -item.Quantity
+           } },
           { session }
         );
 
@@ -98,7 +100,9 @@ const TransactionActivation = async (req, res) => {
 
         const inc = await ToModel.updateOne(
           { _id: to._id, "inSiteProducts.productId": item.ProductId },
-          { $inc: { "inSiteProducts.$.stock": item.Quantity } },
+          { $inc: { "inSiteProducts.$.stock": item.Quantity ,
+            "inSiteProducts.$.TotalQuantity": item.Quantity 
+          } },
           { session }
         );
 

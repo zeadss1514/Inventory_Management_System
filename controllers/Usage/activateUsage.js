@@ -52,7 +52,9 @@ const activateUsage = async (req, res) => {
               $elemMatch: { productId: ProductId, stock: { $gte: Quantity } },
             },
           },
-          { $inc: { "inSiteProducts.$.stock": -Quantity } },
+          { $inc: { "inSiteProducts.$.stock": -Quantity ,
+                    "inSiteProducts.$.TotalUsage": Quantity
+          } },
           { session }
         )
 
